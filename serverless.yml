@@ -1,0 +1,65 @@
+# "org" ensures this Service is used with the correct Serverless Framework Access Key.
+org: jujo9902
+# "app" enables Serverless Framework Dashboard features and sharing them with other Services.
+app: aws-lambda-crud-node
+# "service" is the name of this project. This will also be added to your AWS resource names.
+service: aws-lambda-crud-node
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+  region: us-east-1
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:*
+      Resource:
+        - arn:aws:dynamodb:us-east-1:${aws:accountId}:table/CarsTable
+  # Uncomment to easily set up a custom domain. Read the docs for more details:
+  # https://www.serverless.com/framework/docs/providers/aws/guide/domains
+  # domain: api.example.com
+
+functions:
+  createCar:
+    handler: src/createCar.addCar
+    events:
+      - httpApi:
+          path: /
+          method: post
+  getCars:
+    handler: src/getCars.getCars
+    events:
+      - httpApi:
+          path: /
+          method: get
+  getCar:
+    handler: src/getCar.getCar
+    events:
+      - httpApi:
+          path: /{id}
+          method: get
+  updateCar:
+    handler: src/updateCar.updateCar
+    events:
+      - httpApi:
+          path: /{id}
+          method: put
+  deleteCar:
+    handler: src/deleteCar.deleteCar
+    events:
+      - httpApi:
+          path: /{id}
+          method: delete
+resources:
+  Resources:
+    CarsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: CarsTable
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
