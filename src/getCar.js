@@ -13,7 +13,7 @@ const getCar = async (event) => {
     body: JSON.stringify(result.Item),
   } : {
     statusCode: 404,
-    body: JSON.stringify({ error: 'Car not found' }),
+    body: JSON.stringify({ error: 'Car not found - Please check the ID' }),
   };
 };
 
