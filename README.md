@@ -1,69 +1,58 @@
-<!--
-title: 'AWS Simple HTTP Endpoint example in NodeJS'
-description: 'This template demonstrates how to make a simple HTTP API with Node.js running on AWS Lambda and API Gateway using the Serverless Framework.'
-layout: Doc
-framework: v4
-platform: AWS
-language: nodeJS
-authorLink: 'https://github.com/serverless'
-authorName: 'Serverless, Inc.'
-authorAvatar: 'https://avatars1.githubusercontent.com/u/13742415?s=200&v=4'
--->
+# AWS Lambda CRUD API
 
-# Serverless Framework Node HTTP API on AWS
+API REST serverless con operaciones CRUD (Create, Read, Update, Delete) para gestión de autos. Construida con Serverless Framework, AWS Lambda, API Gateway HTTP API y DynamoDB.
 
-This template demonstrates how to make a simple HTTP API with Node.js running on AWS Lambda and API Gateway using the Serverless Framework.
+## Endpoints
 
-This template does not include any kind of persistence (database). For more advanced examples, check out the [serverless/examples repository](https://github.com/serverless/examples/) which includes Typescript, Mongo, DynamoDB and other examples.
+| Método | Ruta | Descripción |
+|--------|------|-------------|
+| POST | `/` | Crear un auto |
+| GET | `/` | Listar todos los autos |
+| GET | `/{id}` | Obtener un auto por ID |
+| PUT | `/{id}` | Actualizar un auto |
+| DELETE | `/{id}` | Eliminar un auto |
 
-## Usage
+## Despliegue manual
 
-### Deployment
-
-In order to deploy the example, you need to run the following command:
-
-```
+```bash
+npm install
 serverless deploy
 ```
 
-After running deploy, you should see output similar to:
-
-```
-Deploying "serverless-http-api" to stage "dev" (us-east-1)
-
-✔ Service deployed to stack serverless-http-api-dev (91s)
-
-endpoint: GET - https://xxxxxxxxxx.execute-api.us-east-1.amazonaws.com/
-functions:
-  hello: serverless-http-api-dev-hello (1.6 kB)
+Para desarrollo (stage dev):
+```bash
+serverless deploy --stage dev
 ```
 
-_Note_: In current form, after deployment, your API is public and can be invoked by anyone. For production deployments, you might want to configure an authorizer. For details on how to do that, refer to [HTTP API (API Gateway V2) event docs](https://www.serverless.com/framework/docs/providers/aws/events/http-api).
+## CI/CD con GitHub Actions
 
-### Invocation
+El proyecto incluye un pipeline de CI/CD que despliega automáticamente al hacer push a las ramas `main` o `master`.
 
-After successful deployment, you can call the created application via HTTP:
+### Configuración de secrets en GitHub
 
-```
-curl https://xxxxxxx.execute-api.us-east-1.amazonaws.com/
-```
+1. Ve a tu repositorio en GitHub → **Settings** → **Secrets and variables** → **Actions**
+2. Haz clic en **New repository secret**
+3. Agrega los siguientes secrets:
 
-Which should result in response similar to:
+| Secret | Descripción |
+|--------|-------------|
+| `AWS_ACCESS_KEY_ID` | Access Key ID de tu usuario IAM de AWS |
+| `AWS_SECRET_ACCESS_KEY` | Secret Access Key de tu usuario IAM de AWS |
 
-```json
-{ "message": "Go Serverless v4! Your function executed successfully!" }
-```
+### Crear usuario IAM para CI/CD
 
-### Local development
+1. En AWS Console → IAM → Users → Create user
+2. Asigna una política con permisos para: Lambda, API Gateway, DynamoDB, CloudFormation, S3, IAM (para crear roles)
+3. Crea Access Keys para el usuario
+4. Usa esas credenciales como secrets en GitHub
 
-The easiest way to develop and test your function is to use the `dev` command:
+### Flujo del pipeline
 
-```
-serverless dev
-```
+1. **Trigger**: Push a `main` o `master`
+2. **Build**: Instala dependencias con `npm ci`
+3. **Deploy**: Ejecuta `serverless deploy --stage prod`
 
-This will start a local emulator of AWS Lambda and tunnel your requests to and from AWS Lambda, allowing you to interact with your function as if it were running in the cloud.
-
-Now you can invoke the function as before, but this time the function will be executed locally. Now you can develop your function locally, invoke it, and see the results immediately without having to re-deploy.
-
-When you are done developing, don't forget to run `serverless deploy` to deploy the function to the cloud.
+El despliegue crea/actualiza:
+- Funciones Lambda (createCar, getCars, getCar, updateCar, deleteCar)
+- API Gateway HTTP API
+- Tabla DynamoDB (CarsTable)
