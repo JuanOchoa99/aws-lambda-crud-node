@@ -50,7 +50,7 @@ El proyecto incluye un pipeline de CI/CD que despliega automáticamente al hacer
 
 1. **Trigger**: Push a `main` o `master`
 2. **Build**: Instala dependencias con `npm ci`
-3. **Deploy**: Ejecuta `serverless deploy --stage prod`
+3. **Deploy**: Ejecuta `serverless deploy` (usa el stage por defecto: dev)
 
 El despliegue crea/actualiza:
 - Funciones Lambda (createCar, getCars, getCar, updateCar, deleteCar)
