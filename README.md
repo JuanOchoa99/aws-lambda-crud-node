@@ -2,7 +2,21 @@
 
 API REST serverless con operaciones CRUD (Create, Read, Update, Delete) para gestión de autos. Construida con Serverless Framework, AWS Lambda, API Gateway HTTP API y DynamoDB.
 
-## Endpoints
+## Autenticación (AWS Cognito)
+
+Todos los endpoints CRUD requieren autenticación con JWT de Cognito. El frontend debe enviar el token en el header:
+
+```
+Authorization: Bearer <idToken>
+```
+
+### Endpoint público (sin autenticación)
+
+| Método | Ruta | Descripción |
+|--------|------|-------------|
+| GET | `/config` | Obtener configuración de Cognito (UserPoolId, ClientId, region) para el frontend |
+
+### Endpoints protegidos (requieren JWT)
 
 | Método | Ruta | Descripción |
 |--------|------|-------------|
@@ -42,7 +56,7 @@ El proyecto incluye un pipeline de CI/CD que despliega automáticamente al hacer
 ### Crear usuario IAM para CI/CD
 
 1. En AWS Console → IAM → Users → Create user
-2. Asigna una política con permisos para: Lambda, API Gateway, DynamoDB, CloudFormation, S3, IAM (para crear roles)
+2. Asigna una política con permisos para: Lambda, API Gateway, DynamoDB, CloudFormation, S3, IAM, Cognito (para User Pool)
 3. Crea Access Keys para el usuario
 4. Usa esas credenciales como secrets en GitHub
 
@@ -53,6 +67,7 @@ El proyecto incluye un pipeline de CI/CD que despliega automáticamente al hacer
 3. **Deploy**: Ejecuta `serverless deploy` (usa el stage por defecto: dev)
 
 El despliegue crea/actualiza:
-- Funciones Lambda (createCar, getCars, getCar, updateCar, deleteCar)
-- API Gateway HTTP API
+- Funciones Lambda (getConfig, createCar, getCars, getCar, updateCar, deleteCar)
+- API Gateway HTTP API con autorizador JWT (Cognito)
 - Tabla DynamoDB (CarsTable)
+- Cognito User Pool (registro y login)
