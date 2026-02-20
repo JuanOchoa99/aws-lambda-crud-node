@@ -1,10 +1,21 @@
 # Definición de funciones Lambda
+# getConfig: PÚBLICO - no requiere autenticación (para que el frontend obtenga UserPoolId, ClientId)
+getConfig:
+  handler: src/getConfig.getConfig
+  events:
+    - httpApi:
+        path: /config
+        method: get
+
+# Endpoints protegidos con Cognito
 createCar:
   handler: src/createCar.addCar
   events:
     - httpApi:
         path: /
         method: post
+        authorizer:
+          name: cognitoAuth
 
 getCars:
   handler: src/getCars.getCars
@@ -12,6 +23,8 @@ getCars:
     - httpApi:
         path: /
         method: get
+        authorizer:
+          name: cognitoAuth
 
 getCar:
   handler: src/getCar.getCar
@@ -19,6 +32,8 @@ getCar:
     - httpApi:
         path: /{id}
         method: get
+        authorizer:
+          name: cognitoAuth
 
 updateCar:
   handler: src/updateCar.updateCar
@@ -26,6 +41,8 @@ updateCar:
     - httpApi:
         path: /{id}
         method: put
+        authorizer:
+          name: cognitoAuth
 
 deleteCar:
   handler: src/deleteCar.deleteCar
@@ -33,3 +50,5 @@ deleteCar:
     - httpApi:
         path: /{id}
         method: delete
+        authorizer:
+          name: cognitoAuth

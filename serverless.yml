@@ -10,6 +10,20 @@ provider:
       allowedOrigins: ['*']
       allowedHeaders: ['Content-Type', 'Authorization']
       allowedMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS']
+    authorizers:
+      cognitoAuth:
+        type: jwt
+        identitySource: $request.header.Authorization
+        issuerUrl:
+          Fn::Sub:
+            - 'https://cognito-idp.${AWS::Region}.amazonaws.com/${UserPoolId}'
+            - UserPoolId:
+                Ref: CognitoUserPool
+        audience:
+          - !Ref CognitoUserPoolClient
+  environment:
+    USER_POOL_ID: !Ref CognitoUserPool
+    USER_POOL_CLIENT_ID: !Ref CognitoUserPoolClient
   iamRoleStatements:
     - Effect: Allow
       Action:
