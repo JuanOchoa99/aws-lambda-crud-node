@@ -1,4 +1,5 @@
 const AWS = require('aws-sdk')
+const { withCors } = require('./utils/cors')
 
 const updateCar = async (event) => {
   const dynamoDb = new AWS.DynamoDB.DocumentClient();
@@ -8,7 +9,7 @@ const updateCar = async (event) => {
   } catch {
     return {
       statusCode: 400,
-      headers: { 'Content-Type': 'application/json' },
+      headers: withCors({ 'Content-Type': 'application/json' }),
       body: JSON.stringify({ error: 'Invalid JSON body' }),
     };
   }
@@ -18,7 +19,7 @@ const updateCar = async (event) => {
   if (!id) {
     return {
       statusCode: 400,
-      headers: { 'Content-Type': 'application/json' },
+      headers: withCors({ 'Content-Type': 'application/json' }),
       body: JSON.stringify({ error: 'Missing id in path' }),
     };
   }
@@ -39,14 +40,14 @@ const updateCar = async (event) => {
 
     return {
       statusCode: 200,
-      headers: { 'Content-Type': 'application/json' },
+      headers: withCors({ 'Content-Type': 'application/json' }),
       body: JSON.stringify(result.Attributes),
     };
   } catch (error) {
     console.error('DynamoDB error:', error);
     return {
       statusCode: 500,
-      headers: { 'Content-Type': 'application/json' },
+      headers: withCors({ 'Content-Type': 'application/json' }),
       body: JSON.stringify({ error: error.message }),
     };
   }

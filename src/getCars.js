@@ -1,4 +1,5 @@
 const AWS = require('aws-sdk');
+const { withCors } = require('./utils/cors');
 
 const getCars = async (event) => {
   const dynamoDb = new AWS.DynamoDB.DocumentClient();
@@ -7,6 +8,7 @@ const getCars = async (event) => {
   }).promise();
   return {
     statusCode: 200,
+    headers: withCors({ 'Content-Type': 'application/json' }),
     body: JSON.stringify(result.Items),
   };
 };

@@ -1,4 +1,8 @@
 {
+  "scripts": {
+    "test": "jest --coverage",
+    "test:watch": "jest --watch"
+  },
   "dependencies": {
     "@middy/core": "^4.7.0",
     "@middy/http-json-body-parser": "^4.7.0",
@@ -6,6 +10,7 @@
     "uuid": "^9.0.0"
   },
   "devDependencies": {
+    "jest": "^30.2.0",
     "serverless": "^3.40.0"
   }
 }

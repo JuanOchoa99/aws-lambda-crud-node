@@ -1,0 +1,13 @@
+# Recursos de CloudFormation (DynamoDB, etc.)
+Resources:
+  CarsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: CarsTable
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH

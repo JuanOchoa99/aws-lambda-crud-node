@@ -2,6 +2,7 @@ const { v4: uuidv4 } = require('uuid')
 const AWS = require('aws-sdk')
 const middy = require('@middy/core')
 const jsonBodyParser = require('@middy/http-json-body-parser')
+const { withCors } = require('./utils/cors')
 
 const addCar = async (event) => {
   const dynamoDb = new AWS.DynamoDB.DocumentClient();
@@ -23,14 +24,14 @@ const addCar = async (event) => {
 
     return {
       statusCode: 200,
-      headers: { 'Content-Type': 'application/json' },
+      headers: withCors({ 'Content-Type': 'application/json' }),
       body: JSON.stringify(car),
     };
   } catch (error) {
     console.error('DynamoDB error:', error);
     return {
       statusCode: 500,
-      headers: { 'Content-Type': 'application/json' },
+      headers: withCors({ 'Content-Type': 'application/json' }),
       body: JSON.stringify({ error: error.message }),
     };
   }
@@ -38,4 +39,5 @@ const addCar = async (event) => {
 
 module.exports = {
   addCar: middy(addCar).use(jsonBodyParser()),
+  addCarRaw: addCar, // para tests
 };

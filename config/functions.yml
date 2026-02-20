@@ -1,0 +1,35 @@
+# Definición de funciones Lambda
+createCar:
+  handler: src/createCar.addCar
+  events:
+    - httpApi:
+        path: /
+        method: post
+
+getCars:
+  handler: src/getCars.getCars
+  events:
+    - httpApi:
+        path: /
+        method: get
+
+getCar:
+  handler: src/getCar.getCar
+  events:
+    - httpApi:
+        path: /{id}
+        method: get
+
+updateCar:
+  handler: src/updateCar.updateCar
+  events:
+    - httpApi:
+        path: /{id}
+        method: put
+
+deleteCar:
+  handler: src/deleteCar.deleteCar
+  events:
+    - httpApi:
+        path: /{id}
+        method: delete
